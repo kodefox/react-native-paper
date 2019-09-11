@@ -1,6 +1,7 @@
 /* @flow */
 /* eslint-disable no-redeclare */
 
+import { useContext } from 'react';
 import createReactContext, { type Context } from 'create-react-context';
 import createThemeProvider, {
   type ThemeProviderType,
@@ -15,6 +16,7 @@ type ThemingType<T, S> = {
   ThemeContext: Context<T>,
   ThemeProvider: ThemeProviderType<T>,
   withTheme: WithThemeType<T, S>,
+  useTheme: () => T,
 };
 
 function createTheming<T, S>(defaultTheme: T): ThemingType<T, S> {
@@ -29,10 +31,13 @@ function createTheming<T, S>(defaultTheme: T): ThemingType<T, S> {
     ThemeContext
   );
 
+  const useTheme = () => useContext(ThemeContext);
+
   return {
     ThemeContext,
     ThemeProvider,
     withTheme,
+    useTheme,
   };
 }
 
@@ -40,4 +45,5 @@ export const {
   ThemeContext,
   ThemeProvider,
   withTheme,
+  useTheme,
 }: ThemingType<?Theme, ThemeShape> = createTheming(DefaultTheme);

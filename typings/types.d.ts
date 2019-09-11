@@ -46,6 +46,7 @@ export declare const DefaultTheme: Theme;
 export declare const DarkTheme: Theme;
 export declare const ThemeProvider: Theming['ThemeProvider'];
 export declare const ThemeContext: React.Context<Theme>;
+export declare const useTheme: () => Theme;
 
 export declare class Provider extends React.Component<{
   children: React.ReactNode;
