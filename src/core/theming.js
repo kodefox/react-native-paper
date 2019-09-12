@@ -1,7 +1,8 @@
 /* @flow */
 /* eslint-disable no-redeclare */
 
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
+import deepmerge from 'deepmerge';
 import createReactContext, { type Context } from 'create-react-context';
 import createThemeProvider, {
   type ThemeProviderType,
@@ -19,7 +20,11 @@ type ThemingType<T, S> = {
   useTheme: () => T,
 };
 
-function createTheming<T, S>(defaultTheme: T): ThemingType<T, S> {
+type $DeepShape<O: Object> = $Shape<
+  $ObjMap<O, (<V: Object>(V) => $DeepShape<V>) & (<V>(V) => V)>
+>;
+
+function createTheming<T: Object, S>(defaultTheme: T): ThemingType<T, S> {
   const ThemeContext: Context<T> = createReactContext(defaultTheme);
 
   const ThemeProvider: ThemeProviderType<T> = createThemeProvider(
@@ -31,7 +36,16 @@ function createTheming<T, S>(defaultTheme: T): ThemingType<T, S> {
     ThemeContext
   );
 
-  const useTheme = () => useContext(ThemeContext);
+  const useTheme = (overrides?: $DeepShape<T>): T => {
+    const theme = useContext(ThemeContext);
+    const result = useMemo(
+      () =>
+        theme && overrides ? deepmerge(theme, overrides) : theme || overrides,
+      [theme, overrides]
+    );
+
+    return result;
+  };
 
   return {
     ThemeContext,
